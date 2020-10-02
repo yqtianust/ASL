@@ -1,16 +1,17 @@
 import torch
-from src.helper_functions.helper_functions import parse_args
+# from src.helper_functions.helper_functions import parse_args
 from src.models import create_model
 import argparse
 import numpy as np
 from PIL import Image
+from src.models.tresnet import TResNet
 
 
 def infer_batch(model, classes_list, inputs, threshold=0.7):
     # inputs: batch, channel, height, weight
     print('ASL Example Inference code on a batch of images')
 
-    output = torch.sigmoid(model(tensor_batch))
+    output = torch.sigmoid(model(inputs))
 
     probs = output.cpu().detach().numpy()
     labels = []
@@ -30,33 +31,46 @@ def infer_batch(model, classes_list, inputs, threshold=0.7):
     return probs, labels, labels_probs
 
 
-if __name__ == '__main__':
-    # arg parser:
-    parser = argparse.ArgumentParser(description='ASL MS-COCO Inference on a single image')
+def load_model(model_type):
 
-    parser.add_argument('--model_path', type=str, default='./pth_files/TRresNet_L_448_86.6.pth')
-    parser.add_argument('--pic_path', type=str, default='./pics/000000000885.jpg')
-    parser.add_argument('--model_name', type=str, default='tresnet_l')
-    parser.add_argument('--input_size', type=int, default=448)
-    parser.add_argument('--dataset_type', type=str, default='MS-COCO')
-    parser.add_argument('--th', type=float, default=None)
+    if model_type is "L":
+        model_name = "tresnet_l"
+        path = './pth_files/MS_COCO_TRresNet_L_448_86.6.pth'
+        input_size = 448
+        threshold = 0.5
+    elif model_type is "XL":
+        model_name = "tresnet_xl"
+        path = './pth_files/MS_COCO_TResNet_xl_640_88.4.pth'
+        input_size = 640
+        threshold = 0.5
 
-    # parsing args
-    args = parse_args(parser)
+    state = torch.load(path, map_location='cpu')
+    num_classes = state['num_classes']
 
-    # Load image
+    if model_type is "L":
+        do_bottleneck_head = False
+        model = TResNet(layers=[4, 5, 18, 3], num_classes=num_classes, in_chans=3, width_factor=1.2,
+                        do_bottleneck_head=do_bottleneck_head)
+    elif model_type is "XL":
+        model = TResNet(layers=[4, 5, 24, 3], num_classes=num_classes, in_chans=3, width_factor=1.3)
 
-    # feed into infer function
-    state = torch.load(args.model_path, map_location='cpu')
-    args.num_classes = state['num_classes']
-    model = create_model(args).cuda()
+    model = model.cuda()
     model.load_state_dict(state['model'], strict=True)
     model.eval()
 
     classes_list = np.array(list(state['idx_to_class'].values()))
 
-    im = Image.open(args.pic_path)
-    im_resize = im.resize((args.input_size, args.input_size))
+    return model, input_size, threshold, num_classes, classes_list
+
+
+def test():
+
+    model, input_size, threshold, num_classes, classes_list = load_model("L")
+
+    pic_path = './pics/000000000885.jpg'
+
+    im = Image.open(pic_path)
+    im_resize = im.resize((input_size, input_size))
     np_img = np.array(im_resize, dtype=np.uint8)
     np_imgs = np.stack([np_img, np_img])
     print(np_imgs.shape)
@@ -64,7 +78,11 @@ if __name__ == '__main__':
 
     tensor_batch = tensor_img.cuda()
 
-    probs, labels, labels_probs = infer_batch(model, classes_list, inputs=tensor_batch)
+    probs, labels, labels_probs = infer_batch(model, classes_list, tensor_batch, threshold)
     print(probs)
     print(labels)
     print(labels_probs)
+
+if __name__ == '__main__':
+
+    test()
