@@ -45,6 +45,13 @@ class CocoObject(data.Dataset):
         self.id2labels = {}
         #generate one-hot encoding objects annotation for every image
         self.object_ann = np.zeros((len(self.image_ids), 80))
+
+        self.ann_cat_id = {}
+        self.ann_cat_name = {}
+
+        self.bbox = {}
+        self.mask = {}
+
         for idx, image_id in enumerate(self.image_ids):
             ann_ids = self.cocoAPI.getAnnIds(imgIds = image_id)
             anns = self.cocoAPI.loadAnns(ids = ann_ids)
@@ -54,6 +61,15 @@ class CocoObject(data.Dataset):
             encoding_ids = [object2id[name] for name in category_names]
             for encoding_id in encoding_ids:
                 self.object_ann[idx, encoding_id] = 1
+
+            self.ann_cat_name[image_id] = category_names
+            ann_catid = [object2id[elem] for elem in category_names]
+            bboxes = [elem['bbox'] for elem in anns]
+            bboxes = [[round(i) for i in bbox] for bbox in bboxes]
+            masks = [self.cocoAPI.annToMask(ann) for ann in anns]
+            self.ann_cat_id[image_id] = ann_catid
+            self.bbox[image_id] = bboxes
+            self.mask[image_id] = masks
 
     def __getitem__(self, index):
         image_id = self.image_ids[index]
