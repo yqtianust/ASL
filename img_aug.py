@@ -39,7 +39,7 @@ if __name__ == '__main__':
         path = image_path_map[image_id]
 
         unique_anns = list(set(anns))
-        print(unique_anns)
+        # print(unique_anns)
         for unique_ann in unique_anns:
 
             output_filename = "{}_{}.jpg".format(path[0:-4], unique_ann)

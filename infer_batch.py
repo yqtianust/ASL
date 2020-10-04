@@ -9,7 +9,7 @@ from src.models.tresnet import TResNet
 
 def infer_batch(model, classes_list, inputs, threshold=0.7):
     # inputs: batch, channel, height, weight
-    print('ASL Example Inference code on a batch of images')
+    # print('ASL Example Inference code on a batch of images')
 
     output = torch.sigmoid(model(inputs))
 
@@ -22,9 +22,9 @@ def infer_batch(model, classes_list, inputs, threshold=0.7):
 
     for i in range(0, inputs.shape[0]):
         np_output = probs[i, :]
-        print(np_output.shape)
+        # print(np_output.shape)
         detected_classes = classes_list[np_output > threshold]
-        print(detected_classes)
+        # print(detected_classes)
         labels.append(detected_classes)
         labels_probs.append(np_output[np_output > threshold])
 
