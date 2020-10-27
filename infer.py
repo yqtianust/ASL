@@ -7,7 +7,6 @@ from PIL import Image
 import pickle
 
 # import matplotlib
-
 # matplotlib.use('TkAgg')
 # import matplotlib.pyplot as plt
 # from PIL import Image
@@ -50,10 +49,10 @@ def main():
     output = torch.squeeze(torch.sigmoid(model(tensor_batch)))
     np_output = output.cpu().detach().numpy()
 
-    with open("./np_output.pickle", 'wb') as handle:
-        pickle.dump(np_output, handle)
-    with open("./before_sigmod.pickle", 'wb') as handle:
-        pickle.dump(model(tensor_batch).cpu().detach().numpy(), handle)
+    # with open("./np_output.pickle", 'wb') as handle:
+    #     pickle.dump(np_output, handle)
+    # with open("./before_sigmod.pickle", 'wb') as handle:
+    #     pickle.dump(model(tensor_batch).cpu().detach().numpy(), handle)
 
     detected_classes = classes_list[np_output > args.th]
     print('done\n')

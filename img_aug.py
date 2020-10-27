@@ -10,7 +10,8 @@ if __name__ == '__main__':
     ann_dir = '/home/ytianas/EMSE_COCO/cocodataset/annotations'
     image_dir = '/home/ytianas/EMSE_COCO/cocodataset/'
     test_data = CocoObject(ann_dir=ann_dir, image_dir=image_dir,
-                           split='val', transform=None)
+                           split='test', transform=None)
+
     image_ids = test_data.image_ids
     image_path_map = test_data.image_path_map
     # 80 objects

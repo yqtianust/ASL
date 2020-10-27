@@ -17,8 +17,6 @@ def infer_batch(model, classes_list, inputs, threshold=0.7):
     labels = []
     labels_probs = []
 
-
-
     # print(type(classes_list))
     # numpy array
 
@@ -88,7 +86,8 @@ def test_single():
 
 def test_with_loader():
 
-    model, input_size, threshold, num_classes, classes_list = load_model("XL")
+    # model, input_size, threshold, num_classes, classes_list = load_model("XL")
+    model, input_size, threshold, num_classes, classes_list = load_model("L")
 
 
     from torchvision.transforms import transforms
@@ -99,7 +98,8 @@ def test_with_loader():
     from tqdm import tqdm as tqdm
     # crop_size = 224
     # image_size = 256
-    batch_size = 4
+    # batch_size = 4
+    batch_size = 12
     # normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
     #                                  std=[0.229, 0.224, 0.225])
 

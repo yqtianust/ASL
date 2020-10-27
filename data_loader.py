@@ -29,7 +29,6 @@ class CocoObject(data.Dataset):
         #     self.image_ids = self.image_ids[10000:]
 
         print("Num of image ids {}".format(len(self.image_ids)))
-
         self.image_path_map = {elem['id']: elem['file_name'] for elem in self.data['images']}
         #80 objects
         id2object = dict()
@@ -53,6 +52,7 @@ class CocoObject(data.Dataset):
         #
         # self.bbox = {}
         # self.mask = {}
+
 
         for idx, image_id in enumerate(self.image_ids):
             ann_ids = self.cocoAPI.getAnnIds(imgIds = image_id)
