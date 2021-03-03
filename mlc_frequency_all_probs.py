@@ -19,28 +19,28 @@ def main():
     # file_label = [v.split("; ")[2] for v in file_label]
 
     # labels = list(set(file_label))
-    acc_all = np.zeros([50000, 18])
-    arr_violate_obj = np.zeros([50000, 18])
-    arr_violate_bg = np.zeros([50000, 18])
-    arr_violate_both = np.zeros([50000, 18])
-    label_freq_obj = np.zeros([1000, 18])
-    label_freq_bg = np.zeros([1000, 18])
-    label_freq_both = np.zeros([1000, 18])
-    label_acc = np.zeros([1000, 18])
+    acc_all = np.zeros([40504, 3])
+    arr_violate_obj = np.zeros([40504, 3])
+    arr_violate_bg = np.zeros([40504, 3])
+    arr_violate_both = np.zeros([40504, 3])
+    # label_freq_obj = np.zeros([1000, 18])
+    # label_freq_bg = np.zeros([1000, 18])
+    # label_freq_both = np.zeros([1000, 18])
+    # label_acc = np.zeros([1000, 18])
 
     for i in range(0, len(models)):
     # for i in range(1, 2):
         model_name = models[i]
         data =np.load("./mlc_all_probs_analyze_distribution/{}.npz".format(model_name), allow_pickle=True)
 
-        acc = data['acc']
-        prob = data['prob']
+        acc = data['acc'][:,0]
+        # prob = data['prob']
         acc_all[:,i] = acc
-        violate_obj = data['violate_obj']
+        violate_obj = data['violate_obj'][:,0]
         arr_violate_obj[:,i] = violate_obj
-        violate_bg =  data['violate_bg']
+        violate_bg =  data['violate_bg'][:,0]
         arr_violate_bg[:, i] = violate_bg
-        violate_both = data['violate_both']
+        violate_both = data['violate_both'][:,0]
         arr_violate_both[:, i] = violate_both
 
         # for j in range(0, 50000):
@@ -65,18 +65,18 @@ def main():
     overall = [np.sum(np.sum(arr_violate_obj, axis=1) > 0), np.sum(np.sum(arr_violate_bg, axis=1) > 0),
                np.sum(np.sum(arr_violate_both, axis=1) > 0)]
     print(overall)
-    for time in range(1, 11):
+    for time in range(1, 4):
         times_input.append([np.sum(np.sum(arr_violate_obj, axis=1) == time ),
                             np.sum(np.sum(arr_violate_bg, axis=1) == time),
                             np.sum(np.sum(arr_violate_both, axis=1) == time)])
-    times_input.append([np.sum(np.sum(arr_violate_obj, axis=1) > 10),
-                        np.sum(np.sum(arr_violate_bg, axis=1) > 10),
-                        np.sum(np.sum(arr_violate_both, axis=1) > 10)])
+    # times_input.append([np.sum(np.sum(arr_violate_obj, axis=1) > 10),
+    #                     np.sum(np.sum(arr_violate_bg, axis=1) > 10),
+    #                     np.sum(np.sum(arr_violate_both, axis=1) > 10)])
     for ele in times_input:
         print(ele)
-    print(np.divide([np.sum(np.sum(arr_violate_obj, axis=1) == 18 ),
-                            np.sum(np.sum(arr_violate_bg, axis=1) == 18),
-                            np.sum(np.sum(arr_violate_both, axis=1) == 18)], overall))
+    print(np.divide([np.sum(np.sum(arr_violate_obj, axis=1) == 3 ),
+                            np.sum(np.sum(arr_violate_bg, axis=1) == 3),
+                            np.sum(np.sum(arr_violate_both, axis=1) == 3)], overall))
 
     np.savez("./mlc_input_frequency_all_probs.npz", overall=overall, times_input = times_input)
 
