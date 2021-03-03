@@ -130,15 +130,15 @@ def analyze():
 
                 individual_count = 0
 
-                if not compare_l(org_l, obj0_l) or (
+                if (not compare_l(org_l, obj0_l)) or (
                         compare_l(org_l, obj0_l) and larger_p(org_probs, obj0_probs)):
                     individual_count += 1
 
-                if not compare_l(org_l, obj127_l) or (
+                if (not compare_l(org_l, obj127_l)) or (
                         compare_l(org_l, obj127_l) and larger_p(org_probs, obj127_probs)):
                     individual_count += 1
 
-                if not compare_l(org_l, obj255_l) or (
+                if (not compare_l(org_l, obj255_l)) or (
                         compare_l(org_l, obj255_l) and larger_p(org_probs, obj255_probs)):
                     individual_count += 1
 
@@ -166,7 +166,7 @@ def analyze():
         #         f.write("{}\n".format(filename))
 
         # total = np.sum(np.logical_not(ground_truth_acc))
-        total = 50000
+        total = 40504
         count_obj = np.sum(result_obj)
         count_bg = np.sum(result_bg)
         count_intersection = np.sum(common)
@@ -177,15 +177,15 @@ def analyze():
         #                     'ratio_obj_intersection':"{:.3%}".format(count_intersection/count_obj),
         #                     'ratio_bg_intersection':"{:.3%}".format(count_intersection/count_bg)
         #                     })
-        csvwriter.writerow({'model_name': model_name, 'acc': "{:.3%}".format(np.sum(ground_truth_acc) / 50000),
+        csvwriter.writerow({'model_name': model_name, 'acc': "{:.3%}".format(np.sum(ground_truth_acc) / total),
                             'MR1': count_obj, 'MR1_acc': "{:.3%}".format(
                 np.sum(np.logical_and(result_obj, ground_truth_acc)) / count_obj),
                             'MR1_correct': np.sum(np.logical_and(result_obj, ground_truth_acc)),
                             'MR1_incorrect': np.sum(np.logical_and(result_obj, np.logical_not(ground_truth_acc))),
-                            'non_MR1': 50000 - count_obj,
+                            'non_MR1': total - count_obj,
                             'non_MR1_acc': "{:.3%}".format(
                                 np.sum(np.logical_and(np.logical_not(result_obj), ground_truth_acc)) / (
-                                            50000 - count_obj)),
+                                            total - count_obj)),
                             'non_MR1_correct': np.sum(np.logical_and(np.logical_not(result_obj), ground_truth_acc)),
                             'non_MR1_incorrect': np.sum(
                                 np.logical_and(np.logical_not(result_obj), np.logical_not(ground_truth_acc))),
@@ -194,10 +194,10 @@ def analyze():
                             'MR2_acc': "{:.3%}".format(np.sum(np.logical_and(result_bg, ground_truth_acc)) / count_bg),
                             'MR2_correct': np.sum(np.logical_and(result_bg, ground_truth_acc)),
                             'MR2_incorrect': np.sum(np.logical_and(result_bg, np.logical_not(ground_truth_acc))),
-                            'non_MR2': 50000 - count_bg,
+                            'non_MR2': total - count_bg,
                             'non_MR2_acc': "{:.3%}".format(
                                 np.sum(np.logical_and(np.logical_not(result_bg), ground_truth_acc)) / (
-                                            50000 - count_bg)),
+                                            total - count_bg)),
                             'non_MR2_correct': np.sum(np.logical_and(np.logical_not(result_bg), ground_truth_acc)),
                             'non_MR2_incorrect': np.sum(
                                 np.logical_and(np.logical_not(result_bg), np.logical_not(ground_truth_acc))),
@@ -206,10 +206,10 @@ def analyze():
                 np.sum(np.logical_and(common, ground_truth_acc)) / count_intersection),
                             'MR1&2_correct': np.sum(np.logical_and(common, ground_truth_acc)),
                             'MR1&2_incorrect': np.sum(np.logical_and(common, np.logical_not(ground_truth_acc))),
-                            'non_MR1&2': 50000 - count_intersection,
+                            'non_MR1&2': total - count_intersection,
                             'non_MR1&2_acc': "{:.3%}".format(
                                 np.sum(np.logical_and(np.logical_not(common), ground_truth_acc)) / (
-                                            50000 - count_intersection)),
+                                            total - count_intersection)),
                             'non_MR1&2_correct': np.sum(np.logical_and(np.logical_not(common), ground_truth_acc)),
                             'non_MR1&2_incorrect': np.sum(
                                 np.logical_and(np.logical_not(common), np.logical_not(ground_truth_acc))),
@@ -219,7 +219,8 @@ def analyze():
         np.savez(os.path.join("./mlc_all_probs_analyze_distribution", "{}.npz".format(model_name)), acc=ground_truth_acc,
                  violate_obj=np.logical_and(result_obj, ground_truth_acc),
                  violate_bg=np.logical_and(result_bg, ground_truth_acc),
-                 violate_both=np.logical_and(common, np.logical_not(ground_truth_acc)))
+                 violate_both=np.logical_and(common, ground_truth_acc))
+
 if __name__ == '__main__':
     # result_folder = "./all_probs_analyze"
     # create_folder(result_folder)

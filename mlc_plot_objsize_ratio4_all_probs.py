@@ -11,7 +11,7 @@ import math
 #            'mobilenet_v2', 'densenet121', 'densenet169', 'densenet201',
 #            'nasnet_mobile', 'nasnet_large']
 
-models =  ['resnet101' ,'mobilenet', 'nasnet_large', 'vgg16']
+models =  ['MLCCOCO' ,'L', 'XL']
 
 def main():
     plt.rcParams.update({'font.size': 24})
@@ -20,10 +20,10 @@ def main():
     fig, ax = plt.subplots(figsize=(w * 1.6, h * 1.6))
 
 
-    for j in range(2, 3):
+    for j in range(0, 3):
     # for i in range(1, 2):
         model_name = models[j]
-        data =np.load("./all_probs_analyze_distribution/{}.npz".format(model_name), allow_pickle=True)
+        data =np.load("./mlc_all_probs_analyze_distribution/{}.npz".format(model_name), allow_pickle=True)
         fig, ax = plt.subplots(figsize=(w * 1.6, h * 1.6))
         # acc = data['acc']
         # prob = data['prob']
@@ -38,8 +38,8 @@ def main():
         both_size = np.zeros([21])
         all_both = np.zeros([21])
 
-        sizes = np.load("obj_size_ratio.npy")
-        for i in range(0, 50000):
+        sizes = np.load("mlc_obj_size_ratio.npy")
+        for i in range(0, 40504):
             size = sizes[i]
             id = math.floor(size / 0.05)
             all_obj[id] += 1
@@ -70,7 +70,7 @@ def main():
         ax.set_ylabel("Percentage of Unreliable Inferences")
         ax.set_xlabel("Ratio of Target Object Size")
         plt.show()
-        fig.savefig("./obj_size_{}_all_probs.PDF".format(model_name))
+        fig.savefig("./mlc_obj_size_{}_all_probs.PDF".format(model_name))
 
 
 if __name__ == '__main__':

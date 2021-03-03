@@ -49,9 +49,9 @@ class CocoObject(data.Dataset):
 
         # self.ann_cat_id = {}
         # self.ann_cat_name = {}
-        #
+        # #
         # self.bbox = {}
-        self.mask = {}
+        # self.mask = {}
 
 
         for idx, image_id in enumerate(self.image_ids):
@@ -93,7 +93,20 @@ class CocoObject(data.Dataset):
         if self.transform is not None:
             img = self.transform(img)
 
-        return img, torch.Tensor(self.object_ann[index]), image_id
+        ann_ids = self.cocoAPI.getAnnIds(imgIds=image_id)
+        anns = self.cocoAPI.loadAnns(ids=ann_ids)
+        category_ids = [elem['category_id'] for elem in anns]
+        category_names = [elem['name'] for elem in self.cocoAPI.loadCats(ids=category_ids)]
+        self.id2labels[image_id] = category_names
+
+        ann_cat_name = category_names
+        ann_catid = [self.object2id[elem] for elem in category_names]
+        bboxes = [elem['bbox'] for elem in anns]
+        bboxes = [[round(i) for i in bbox] for bbox in bboxes]
+        masks = [self.cocoAPI.annToMask(ann) for ann in anns]
+
+
+        return img, torch.Tensor(self.object_ann[index]), image_id, ann_catid, ann_cat_name, bboxes, masks
 
     def getObjectWeights(self):
         return (self.object_ann == 0).sum(axis = 0) / (1e-8 + self.object_ann.sum(axis = 0))

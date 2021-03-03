@@ -11,12 +11,10 @@ import os
 
 
 def main():
-    # img_folders = ["../coco_img/bg2_0/", "../coco_img/bg2_127/", "../coco_img/bg2_255/",
-    #                "../coco_img/obj2_0/", "../coco_img/obj2_127/", "../coco_img/obj2_255/"]
 
-    img_folders = ["../coco_img/merged_bg2_0/", "../coco_img/merged_bg2_127/", "../coco_img/merged_bg2_255/",
-                   "../coco_img/merged_obj2_0/", "../coco_img/merged_obj2_127/", "../coco_img/merged_obj2_255/"]
-    img_folders = ["../coco_img/org/"]
+    img_folders = ["../coco_img/org/",
+                   "../coco_img/bg_0/", "../coco_img/bg_127/", "../coco_img/bg_255/",
+                   "../coco_img/obj_0/", "../coco_img/obj_127/", "../coco_img/obj_255/"]
 
 
     for model_name in ["L", "XL"]:
@@ -39,7 +37,7 @@ def main():
             ])
 
             # Data samplers.
-            # img_folder = "../coco_img/bg2_0/"
+            # img_folder = "../coco_img/bg_0/"
             cocomlc = COCO_MLC(img_folder, val_transform)
 
             test_loader = torch.utils.data.DataLoader(cocomlc, batch_size=batch_size,

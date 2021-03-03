@@ -51,7 +51,7 @@ class CocoObject(data.Dataset):
         # self.ann_cat_name = {}
         #
         # self.bbox = {}
-        # self.mask = {}
+        self.mask = {}
 
 
         for idx, image_id in enumerate(self.image_ids):
